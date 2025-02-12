@@ -1,0 +1,28 @@
+{
+  "name": "@t1ckbase/leetcode-api",
+  "version": "0.3.0",
+  "exports": "./mod.ts",
+  "publish": {
+    "exclude": ["./.vscode", "./cookies.json", "./main.ts", "./tests"]
+  },
+  "license": "MIT",
+  "tasks": {
+    "start": "deno run --allow-net --allow-read=./ --allow-write=./ main.ts",
+    "test": "deno test --allow-net --allow-read=./ --allow-write=./ ./tests/leetcode_test.ts"
+  },
+  "fmt": {
+    "indentWidth": 2,
+    "lineWidth": 160,
+    "proseWrap": "preserve",
+    "semiColons": true,
+    "singleQuote": true,
+    "useTabs": false
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.11",
+    "@std/async": "jsr:@std/async@^1.0.10",
+    "@std/fs": "jsr:@std/fs@^1.0.11",
+    "@std/http": "jsr:@std/http@^1.0.13",
+    "devices": "https://raw.githubusercontent.com/microsoft/playwright/main/packages/playwright-core/src/server/deviceDescriptorsSource.json"
+  }
+}
