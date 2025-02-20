@@ -1,6 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 
-export interface WeeklyContest {
+export type ContestType = 'biweekly' | 'weekly';
+
+export interface WeekendContest {
   contest: Contest;
   questions: ContestQuestion[];
   company: Company;
@@ -87,7 +89,7 @@ export interface TotalRank {
   };
 }
 
-export interface WeeklyContestRanking {
+export interface WeekendContestRanking {
   user_num: number;
   ak_info: {
     ak_num: number;

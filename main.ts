@@ -1,7 +1,7 @@
 // import { CookieFetcher } from './utils/cookie-fetcher.ts';
 // import { findFirstValue } from './utils/find-first-value.ts';
 import devices from 'devices' with { type: 'json' };
-import { Leetcode } from './leetcode.ts';
+import { ContestType, Leetcode } from './mod.ts';
 // const fetcher = new CookieFetcher({
 //   baseUrl: 'https://leetcode.com',
 //   headers: {
@@ -58,15 +58,17 @@ const leetcode = new Leetcode({
 // const reportResult = await leetcode.reportSubmission('ai generated', 22365159);
 // console.log(reportResult);
 
-const week = 436;
+const contestType: ContestType = 'weekly';
+const week = 437;
+const magicWord = 'velmocretz';
 
-const weeklyContest = await leetcode.getWeeklyContest(week);
-console.log(weeklyContest.questions.map((q) => `${q.title_slug} - ${q.question_id}`));
+const contest = await leetcode.getContest(contestType, week);
+console.log(contest.questions.map((q) => `${q.title_slug} - ${q.question_id}`));
 
-// const weeklyContestRanking = await leetcode.getWeeklyContestRanking(week);
+// const weeklyContestRanking = await leetcode.getContestRanking('weekly', week);
 // console.log(weeklyContestRanking);
 
-const reportResult = await leetcode.reportAiGenerated(week, weeklyContest.questions[2].question_id, 'zymbrovark');
+const reportResult = await leetcode.reportAiGenerated(contestType, week, contest.questions[2].question_id, magicWord);
 console.log(reportResult.length);
 
 leetcode.close();

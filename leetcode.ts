@@ -5,6 +5,7 @@ import type {
   ActiveDailyCodingChallengeQuestion,
   CodeWithRuntime,
   ContestSubmission,
+  ContestType,
   Lang,
   Question,
   ReportResult,
@@ -12,8 +13,8 @@ import type {
   SubmissionDetails,
   SubmissionResult,
   UserStatus,
-  WeeklyContest,
-  WeeklyContestRanking,
+  WeekendContest,
+  WeekendContestRanking,
 } from './types/types.ts';
 
 /**
@@ -453,34 +454,34 @@ export class Leetcode {
     return (await response.json()).data.submissionDetails;
   }
 
-  async getWeeklyContest(week: number): Promise<WeeklyContest> {
+  async getContest(type: ContestType, week: number): Promise<WeekendContest> {
     const csrftoken = this.fetcher.getCookie('csrftoken');
     if (!csrftoken) {
       throw new Error('No CSRF token found');
     }
-    const response = await this.fetcher.fetch(`/contest/api/info/weekly-contest-${week}/`, {
+    const response = await this.fetcher.fetch(`/contest/api/info/${type}-contest-${week}/`, {
       headers: {
         'x-csrftoken': csrftoken.value,
       },
     });
     if (!response.ok) {
-      throw new Error(`Failed to get weekly contest: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to get ${type} contest: ${response.status} ${response.statusText}`);
     }
     return await response.json();
   }
 
-  async getWeeklyContestRanking(week: number, page: number = 1): Promise<WeeklyContestRanking> {
+  async getContestRanking(type: ContestType, week: number, page: number = 1): Promise<WeekendContestRanking> {
     const csrftoken = this.fetcher.getCookie('csrftoken');
     if (!csrftoken) {
       throw new Error('No CSRF token found');
     }
-    const response = await this.fetcher.fetch(`/contest/api/ranking/weekly-contest-${week}/?pagination=${page}&region=global_v2`, {
+    const response = await this.fetcher.fetch(`/contest/api/ranking/${type}-contest-${week}/?pagination=${page}&region=global_v2`, {
       headers: {
         'x-csrftoken': csrftoken.value,
       },
     });
     if (!response.ok) {
-      throw new Error(`Failed to get weekly contest ranking: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to get ${type} contest ranking: ${response.status} ${response.statusText}`);
     }
     return await response.json();
   }
@@ -533,10 +534,10 @@ export class Leetcode {
     return submissionDetails;
   }
 
-  async reportAiGenerated(week: number, questionId: number | string, magicWord: string, maxPage: number = 30): Promise<ReportResult[]> {
+  async reportAiGenerated(type: ContestType, week: number, questionId: number | string, magicWord: string, maxPage: number = 30): Promise<ReportResult[]> {
     const reportResults: ReportResult[] = [];
     for (let page = 1; page <= maxPage; page++) {
-      const weeklyContestRanking = await this.getWeeklyContestRanking(week, page);
+      const weeklyContestRanking = await this.getContestRanking(type, week, page);
       for (const user of weeklyContestRanking.total_rank) {
         const submissionId = user.submissions[String(questionId)]?.submission_id;
         if (!submissionId) continue;
@@ -544,7 +545,7 @@ export class Leetcode {
         try {
           const contestSubmission = await this.getContestSubmission(submissionId, user.data_region);
           if (contestSubmission.code.includes(magicWord)) {
-            console.log(`Found cheating: ${user.username} - ${contestSubmission.lang}`);
+            console.log(`Found cheating: ${user.username} - ${contestSubmission.lang} - rank: ${user.rank}`);
             const reportResult = await this.reportSubmission(`${magicWord}, ai generated.`, contestSubmission.contest_submission);
             reportResults.push(reportResult);
           }
