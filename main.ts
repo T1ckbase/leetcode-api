@@ -1,7 +1,7 @@
 // import { CookieFetcher } from './utils/cookie-fetcher.ts';
 // import { findFirstValue } from './utils/find-first-value.ts';
 import devices from 'devices' with { type: 'json' };
-import { ContestType, Leetcode } from './mod.ts';
+import { type ContestType, Leetcode } from './mod.ts';
 // const fetcher = new CookieFetcher({
 //   baseUrl: 'https://leetcode.com',
 //   headers: {
